@@ -1,0 +1,135 @@
+/*
+Citation for the following code: 
+Code adapted from Node.JS starter guide
+Source URL: https://github.com/osu-cs340-ecampus/nodejs-starter-app
+*/
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Project Adapt - Manga_Readers</title>
+        <link href="./css/style.css" rel="stylesheet" type="text/css" />
+        <script src="https://kit.fontawesome.com/a4d6593cdd.js" crossorigin="anonymous"></script>
+        <script language="JavaScript">
+            function showform(dowhat) {
+              /*
+              CRUD operations are made visible here
+              */
+              if (dowhat == 'insert'){
+				        document.getElementById('browse').style.display = 'none';
+			          document.getElementById('insert').style.display = 'block';
+			          document.getElementById('update').style.display = 'none';
+			        }
+			        else if (dowhat == 'update'){
+			          document.getElementById('browse').style.display = 'none';
+			          document.getElementById('insert').style.display = 'none';
+			          document.getElementById('update').style.display = 'block';
+		          }
+              else if (dowhat == 'all'){
+		        		document.getElementById('browse').style.display = 'block';
+		        		document.getElementById('insert').style.display = 'block';
+		        		document.getElementById('update').style.display = 'block';
+		        	}
+	    	      else { //by default display browse
+	    		      document.getElementById('browse').style.display = 'block';
+		         		document.getElementById('insert').style.display = 'none';
+		         		document.getElementById('update').style.display = 'none';
+		        	}
+            }
+            function newManga_Reader() { showform('insert'); }
+            function updateManga_Reader(manga_id) { showform('update'); }
+            function deleteManga_Reader(manga_id) { showform ('delete'); }
+            function browseManga_Readers() { showform ('browse'); }
+            function showAll() { showform ('all'); }  
+        </script>
+    </head>
+
+    <body onload="browseManga_Readers()">
+        <h1>Browse Manga_Readers <i class="fa-solid fa-book-openreader"></i></h1>
+        <h2>[ <a href="/">Home <i class="fa-solid fa-house"></i></a> | <a href="/manga">Manga <i class="fa-solid fa-book-open"></i></a> | <a href="/readers">Readers <i class="fa-solid fa-users"></i></a> | Manga_Readers <i class="fa-solid fa-book-open-reader"></i> | <a href="/authors">Authors <i class="fa-solid fa-pen-nib"></i></a> | <a href="/anime">Anime <i class="fa-solid fa-video"></i></a> | <a href="/studios">Studios <i class="fa-solid fa-film"></i></a> ]</h2>
+        
+        <div id="browse">
+            <p><a href="#" onClick="showAll()" class="formsDisplay">Display all Forms</a></p>
+            <table id="mangareaders-table" border="1" cellpadding="5">
+
+                <thead>
+
+                  <tr>
+                    <button class="btn2"><a href="#" onClick="newManga_Reader()">New</a></th></button>
+                    <button class="btn2"><a href="#" onClick="updateManga_Reader({{this.manga_id}})">Update</a></th></button>
+                    <th></th>
+                    <th>Manga ID</th>
+                    <th>Reader ID</th>
+                  </tr> 
+                </thead>
+                
+                <tbody>
+                  
+                  {{#each data}}
+                  <tr data-value={{this.manga_id}}>
+                    <td><button class="btndel" onclick="deleteManga_Reader({{this.manga_id}})">Delete</button></td>
+                    <td>{{this.manga_id}}</td>
+                    <td>{{this.reader_id}}</td>
+                  </tr>
+                  {{/each}}
+                </tbody>          
+            </table> 
+            <script src="./js/delete_mangareader.js"></script>
+            <p>&nbsp;</p>
+        </div> <!-- browse -->
+
+        <div id="insert">
+          <h2>Add a Manga Reader Relationship</h2>
+          <p>Use the form below to add a Manga Reader relationship to the database</p>
+            <form id="add-mangareader-form" method="POST" action="/add-mangareader-form">
+              <fieldset class="fields">
+                  <label for="input-manga"> Manga: </label> 
+                    <select name="input-manga">
+                    <option value="">Select a Manga</option>
+                    {{#each manga}}
+                    <option value="{{this.manga_id}}">{{this.title}}</option>
+                    {{/each}}
+                    </select>
+                  <label for="input-reader"> Reader: </label> 
+                    <select name="input-reader">
+                    <option value="">Select a Reader</option>
+                    {{#each readers}}
+                    <option value="{{this.reader_id}}">{{this.name}}</option>
+                    {{/each}}
+                    </select>
+                </fieldset>
+                  <button class="btn" type="submit" value="Add Manga Reader"><span>Add Manga Reader</span></button>
+                  <button class="btn" type="button" value="Cancel" onClick="browseManga_Readers()"><span>Cancel</span></button>
+            </form>        
+        </div><!-- insert --> 
+
+        <p>&nbsp;</p>
+        <div id="update">
+          <h2>Updating a Manga Reader Relationship Form</h2>
+          <p>Use the form below to select and update a relationship</p>
+            <form id="update-mangareader-form-ajax">
+                <fieldset class="fields">
+                  <label for="input-manga">Manga: </label>
+                    <select name="input-manga" id="mySelect">
+                      <option value="test">Select a Manga</option>
+                      {{#each data}}
+                      <option value="{{this.manga_id}}">{{this.manga_id}}</option>
+                      {{/each}}
+                    </select>
+                  <label for="input-reader"> Reader: </label> 
+                    <select name="input-reader" id="input-reader-update">
+                    <option value="">Select a Reader</option>
+                    {{#each data}}
+                    <option value="{{this.reader_id}}">{{this.reader_id}}</option>
+                    {{/each}}
+                    </select>
+              </fieldset>
+                  <button class="btn" type="submit" value="Update Manga Reader"><span>Update Manga Reader</span></button>
+                  <button class="btn" type="button" value="Cancel" onClick="browseManga_Readers()"><span>Cancel</span></button>
+            </form> 
+          <script src="./js/update_mangareader.js"></script>
+        </div><!-- update -->
+ 
+    </body>
+</html>

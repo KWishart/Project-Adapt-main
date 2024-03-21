@@ -1,0 +1,151 @@
+/*
+Citation for the following code: 
+Code adapted from Node.JS starter guide
+Source URL: https://github.com/osu-cs340-ecampus/nodejs-starter-app
+*/
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Project Adapt - Readers</title>
+        <link href="./css/style.css" rel="stylesheet" type="text/css" />
+        <script src="https://kit.fontawesome.com/a4d6593cdd.js" crossorigin="anonymous"></script>
+        <script language="JavaScript">
+            function showform(dowhat) {
+              /*
+              CRUD operations are made visible here
+              */
+              if (dowhat == 'insert'){
+				        document.getElementById('browse').style.display = 'none';
+			          document.getElementById('insert').style.display = 'block';
+			          document.getElementById('update').style.display = 'none';
+			          document.getElementById('delete').style.display = 'none';
+			        }
+			        else if (dowhat == 'update'){
+			          document.getElementById('browse').style.display = 'none';
+			          document.getElementById('insert').style.display = 'none';
+			          document.getElementById('update').style.display = 'block';
+				        document.getElementById('delete').style.display = 'none';
+		          }
+		          else if (dowhat == 'delete'){
+			  	      document.getElementById('browse').style.display = 'none';
+			  	      document.getElementById('insert').style.display = 'none';
+			        	document.getElementById('update').style.display = 'none';
+		        		document.getElementById('delete').style.display = 'block';
+	          	}
+              else if (dowhat == 'all'){
+		        		document.getElementById('browse').style.display = 'block';
+		        		document.getElementById('insert').style.display = 'block';
+		        		document.getElementById('update').style.display = 'block';
+		         		document.getElementById('delete').style.display = 'block';
+		        	}
+	    	      else { //by default display browse
+	    		      document.getElementById('browse').style.display = 'block';
+		         		document.getElementById('insert').style.display = 'none';
+		         		document.getElementById('update').style.display = 'none';
+		         		document.getElementById('delete').style.display = 'none';
+		        	}
+            } 
+            function newReader() { showform('insert'); }
+            function updateReader(reader_id) { showform('update'); }
+            function deleteReader(reader_id) { showform ('delete'); }
+            function browseReaders() { showform ('browse'); }
+            function showAll() { showform ('all'); }  
+        </script>
+    </head>
+
+    <body onload="browseReaders()">
+        <h1>Browse Readers <i class="fa-solid fa-users"></i></h1>
+        <h2>[ <a href="/">Home <i class="fa-solid fa-house"></i></a> | <a href="/manga">Manga <i class="fa-solid fa-book-open"></i></a> | Readers <i class="fa-solid fa-users"></i></a> | <a href="/manga_readers">Manga_Readers <i class="fa-solid fa-book-open-reader"></i></a> | <a href="/authors">Authors <i class="fa-solid fa-pen-nib"></i></a> | <a href="/anime">Anime <i class="fa-solid fa-video"></i></a> | <a href="/studios">Studios <i class="fa-solid fa-film"></i></a> ]</h2>
+        <div id="browse">
+            <p><a href="#" onClick="showAll()" class="formsDisplay">Display all Forms</a></p>
+            <table border="1" cellpadding="5" id="readers-table">
+
+              <thead>
+                <tr>
+                    <button class="btn2"><a href="#" onClick="newReader()"> New </a></button>
+                    <button class="btn2"><a href="#" onClick="updateReader({{this.reader_id}})"> Update </a></button>
+                    <th></th>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Gender</th>
+                    <th>Country</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {{#each data}}
+                  <tr>
+                    <td><button class="btndel" onclick="deleteReader({{this.reader_id}})">Delete</td>
+                    <td>{{this.reader_id}}</td>
+                    <td>{{this.name}}</td>
+                    <td>{{this.age}}</td>
+                    <td>{{this.gender}}</td>
+                    <td>{{this.country}}</td>
+                  </tr>
+                {{/each}}
+              </tbody>
+
+            </table>
+            <script src="./js/delete_reader.js"></script>
+            <p>&nbsp;</p>
+        </div> <!-- browse -->
+
+        <div id="insert">
+            <form id = "add-reader-form" method="POST" action="/add-reader-form">
+                <h2>Adding a New Reader</h2>
+                <p>Use the form below to add a new Reader to the database</p>
+                  <fieldset class="fields">
+                    <label for="input-name"> Name: </label> 
+                    <input type="text" name="input-name" id="input-name">
+                    <label for="input-age"> Age: </label> 
+                    <input type="number" name="input-age" id="input-age">
+                    <label for="input-gender"> Gender: </label> <select name="input-gender" id="input-gender">
+                        <option {{gender}}="">&nbsp;</option>
+                        <option {{gender}}="Male">Male</option>
+                        <option {{gender}}="Female">Female</option>
+                        <option {{gender}}="Non-Binary">Non-Binary</option>
+                        <option {{gender}}="Other">Other</option>
+                        </select>
+                    <label for="input-country"> Country: </label> 
+                    <input type="text" name="input-country" id="input-country">
+              </fieldset>
+                  <button class="btn" type="submit" value="Add Reader"><span>Add Reader</span></button>
+                  <button class="btn" type="button" value="Cancel" onClick="browseReaders()"><span>Cancel</span></button>
+            </form> 
+        </div><!-- insert -->
+
+        <p>&nbsp;</p>
+        <div id="update">
+            <h2>Updating a Reader's Information</h2>
+            <p>Use the form below to update a current Reader</p>
+            <form id="update-reader-form-ajax">
+                  <fieldset class="fields">
+                    <label for="input-name"> Name: </label>
+                    <select name="input-name" id="mySelect">
+                      <option value="test">Select a Reader</option>
+                      {{#each data}}
+                      <option value="{{this.reader_id}}">{{this.name}}</option>
+                      {{/each}}
+                    </select>
+                    <label for="input-age"> Age: </label> <input type="number" name="input-age" id="input-age-update">
+                    <label for="input-gender"> Gender: </label> 
+                    <select name="input-gender" id="input-gender-update">
+                      <option {{gender}}="">&nbsp;</option>
+                      <option {{gender}}="Male">Male</option>
+                      <option {{gender}}="Female">Female</option>
+                      <option {{gender}}="Non-Binary">Non-Binary</option>
+                      <option {{gender}}="Other">Other</option>
+                    </select>
+                    <label for="input-country"> Country: </label> <input type="text" name="input-country" id="input-country-update">
+                  </fieldset>
+                  <button class="btn" type="submit" value="Update Reader"><span>Update Reader</span></button>
+                  <button class="btn" type="button" value="Cancel" onClick="browseReaders()"><span>Cancel</span></button>
+            </form>
+            <script src="./js/update_reader.js"></script>
+        </div><!-- update -->
+
+    </body>
+</html>

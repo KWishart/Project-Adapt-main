@@ -1,0 +1,179 @@
+/*
+Citation for the following code: 
+Code adapted from Node.JS starter guide
+Source URL: https://github.com/osu-cs340-ecampus/nodejs-starter-app
+*/
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Project Adapt - Manga</title>
+        <link href="./css/style.css" rel="stylesheet" type="text/css" />
+        <script src="https://kit.fontawesome.com/a4d6593cdd.js" crossorigin="anonymous"></script>
+        <script language="JavaScript">
+            function showform(dowhat) {
+              /*
+              CRUD operations are made visible here
+              */
+              if (dowhat == 'insert'){
+				        document.getElementById('browse').style.display = 'none';
+				        document.getElementById('insert').style.display = 'block';
+				        document.getElementById('update').style.display = 'none';
+				        document.getElementById('delete').style.display = 'none';
+			        }
+			        else if (dowhat == 'update'){
+			          document.getElementById('browse').style.display = 'none';
+			          document.getElementById('insert').style.display = 'none';
+			          document.getElementById('update').style.display = 'block';
+			 	        document.getElementById('delete').style.display = 'none';
+			        }
+			        else if (dowhat == 'delete'){
+			  	      document.getElementById('browse').style.display = 'none';
+			  	      document.getElementById('insert').style.display = 'none';
+		          	document.getElementById('update').style.display = 'none';
+	          		document.getElementById('delete').style.display = 'block';
+	          	}
+              else if (dowhat == 'all'){
+		        		document.getElementById('browse').style.display = 'block';
+		        		document.getElementById('insert').style.display = 'block';
+		        		document.getElementById('update').style.display = 'block';
+	           		document.getElementById('delete').style.display = 'block';
+	          	}
+		    	    else { //by default display browse
+		    	      document.getElementById('browse').style.display = 'block';
+		         		document.getElementById('insert').style.display = 'none';
+		         		document.getElementById('update').style.display = 'none';
+	           		document.getElementById('delete').style.display = 'none';
+	          	}
+            }
+            function newManga() { showform('insert'); }
+            function updateManga(manga_id) { showform('update'); }
+            function deleteManga(manga_id) { showform ('delete'); }
+            function browseManga() { showform ('browse'); }
+            function showAll() { showform ('all'); }  
+        </script>
+    </head>
+
+    <body onload="browseManga()">
+        <h1>Browse Manga <i class="fa-solid fa-book-open"></i></h1>
+        <h2>[ <a href="/">Home <i class="fa-solid fa-house"></i></a> | Manga <i class="fa-solid fa-book-open"></i></a> | <a href="/readers">Readers<i class="fa-solid fa-users"></i></a> | <a href="/manga_readers">Manga_Readers <i class="fa-solid fa-book-open-reader"></i></a> | <a href="/authors">Authors <i class="fa-solid fa-pen-nib"></i></a> | <a href="/anime">Anime <i class="fa-solid fa-video"></i></a> | <a href="/studios">Studios <i class="fa-solid fa-film"></i></a> ]</h2>
+
+        <div id="browse">
+            <p><a href="#" onClick="showAll()" class="formsDisplay">Display all Forms</a></p>
+            <table border="1" cellpadding="5" id="manga-table">
+
+              <thead>
+                <tr>
+                    <button class="btn2"><a href="#" onClick="newManga()"> New </a></button>
+                    <button class="btn2"><a href="#" onClick="updateManga({{this.manga_id}})"> Update </a></button>
+                    <th></th>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Publisher</th>
+                    <th>Genre</th>
+                    <th>Demographic</th>
+                    <th>Average Score</th>
+                    <th>Monthly Readers</th>
+                    <th>Author ID</th>
+                    <th>Anime ID</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {{#each data}}
+                  <tr data-value="{{this.manga_id}}">
+                    <td><button class="btndel" onclick="deleteManga({{this.manga_id}})">Delete</button></td>
+                    <td>{{this.manga_id}}</td>
+                    <td>{{this.title}}</td>
+                    <td>{{this.publisher}}</td>
+                    <td>{{this.genre}}</td>
+                    <td>{{this.demographic}}</td>
+                    <td>{{this.average_score}}</td>
+                    <td>{{this.monthly_readers}}</td>
+                    <td>{{this.author_id}}</td>
+                    <td>{{this.anime_id}}</td>
+                  </tr>
+                {{/each}}
+              </tbody>
+
+            </table>
+            <script src="./js/delete_manga.js"></script>
+            <p>&nbsp;</p>
+        </div> <!-- browse -->
+
+        <div id="insert">
+          <h2>Add a Manga</h2>
+          <p>Use the form below to add a Manga to the database.</p>
+            <form method="POST" id="add-manga-form" action="/add-manga-form">
+              <fieldset class="fields">
+                <label for="input-title"> Title: </label> 
+                <input type="text" name="input-title" id="input-title">
+                <label for="input-publisher"> Publisher: </label> 
+                <input type="text" name="input-publisher" id="input-publisher">
+                <label for="input-genre"> Genre (separate by commas): </label> 
+                <input type="text" name="input-genre" id="input-genre">
+                <label for="input-demographic"> Demographic: </label> <select name="input-demographic" id="input-demographic">
+                    <option {{demographic}}="">&nbsp;</option>
+                    <option {{demographic}}="Seinen">Seinen</option>
+                    <option {{demographic}}="Josei">Josei</option>
+                    <option {{demographic}}="Shounen">Shounen</option>
+                    <option {{demographic}}="Shoujo">Shoujo</option>
+                    <option {{demographic}}="Kids">Kids</option>
+                  </select>
+                <label for="input-average_score"> Average Score: </label> 
+                <input type="number" step="0.01" name="input-average_score" id="input-average_score">
+                <label for="input-monthly_readers"> Monthly Readers: </label> 
+                <input type="number" name="input-monthly_readers" id="input-monthly_readers">
+                <label for="input-author"> Author: </label> 
+                  <select name="input-author">
+                  <option value="">Select an Author</option>
+                  {{#each authors}}
+                  <option value="{{this.author_id}}">{{this.name}}</option>
+                  {{/each}}
+                  </select>
+                <label for="input-anime"> Anime: </label> 
+                  <select name="input-anime">
+                  <option value="">Select an Anime</option>
+                  {{#each anime}}
+                  <option value="{{this.anime_id}}">{{this.title}}</option>
+                  {{/each}}
+                  </select>
+              </fieldset>
+                <button class="btn" type="submit" id="addManga" value="Add Manga"><span>Add Manga</span></button>
+                <button class="btn" type="button" value="Cancel" onClick="browseManga()"><span>Cancel</span></button>            </form> 
+        </div><!-- insert -->
+
+        <p>&nbsp;</p>
+        <div id="update">
+          <h2>Updating a Manga</h2>
+          <p>Use the form below to select a Manga and update its details</p>
+            <form id="update-manga-form-ajax">
+                  <fieldset class="fields">
+                    <label for="input-title">Title: </label>  
+                      <select name="input-title" id="mySelect">
+                        <option value="test">Select a Manga</option>
+                        {{#each data}}
+                        <option value="{{this.manga_id}}">{{this.title}}</option>
+                        {{/each}}
+                      </select>
+                    <label for="input-average_score">Average Score: </label>
+                    <input type="number" step="0.01" name="input-average_score" id="input-average_score-update">
+                    <label for="input-monthly_readers">Monthly Readers: </label>
+                    <input type="number" name="input-monthly_readers" id="input-monthly_readers-update">
+                    <label for="input-anime">Anime: </label>
+                    <select name="input-anime" id="input-anime-update">
+                      <option value="">Select an Anime</option>
+                      {{#each anime}}
+                      <option value="{{this.anime_id}}">{{this.title}}</option>
+                      {{/each}}
+                    </select>
+              </fieldset>
+                <button class="btn" type="submit" value="Update Manga"><span>Update Manga</span></button>
+                  <button class="btn" type="button" value="Cancel" onClick="browseManga()"><span>Cancel</span></button>
+            </form> 
+          <script src="./js/update_manga.js"></script>
+        </div><!-- update -->
+
+    </body>
+</html>

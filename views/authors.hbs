@@ -1,0 +1,128 @@
+/*
+Citation for the following code: 
+Code adapted from Node.JS starter guide
+Source URL: https://github.com/osu-cs340-ecampus/nodejs-starter-app
+*/
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Project Adapt - Authors</title>
+        <link href="./css/style.css" rel="stylesheet" type="text/css" />
+        <script src="https://kit.fontawesome.com/a4d6593cdd.js" crossorigin="anonymous"></script>
+        <script language="JavaScript">
+            function showform(dowhat) {
+              /*
+              CRUD operations are made visible here
+              */
+              if (dowhat == 'insert'){
+			          document.getElementById('browse').style.display = 'none';
+			          document.getElementById('insert').style.display = 'block';
+			          document.getElementById('update').style.display = 'none';
+			          document.getElementById('delete').style.display = 'none';
+			        }
+			        else if (dowhat == 'update'){
+			          document.getElementById('browse').style.display = 'none';
+			          document.getElementById('insert').style.display = 'none';
+			          document.getElementById('update').style.display = 'block';
+			          document.getElementById('delete').style.display = 'none';
+			        }
+			        else if (dowhat == 'delete'){
+			    	    document.getElementById('browse').style.display = 'none';
+		    	      document.getElementById('insert').style.display = 'none';
+		          	document.getElementById('update').style.display = 'none';
+		        		document.getElementById('delete').style.display = 'block';
+		        	}
+              else if (dowhat == 'all'){
+	          		document.getElementById('browse').style.display = 'block';
+	          		document.getElementById('insert').style.display = 'block';
+		        		document.getElementById('update').style.display = 'block';
+		         		document.getElementById('delete').style.display = 'block';
+		        	}
+		    	    else { //by default display browse
+	    		      document.getElementById('browse').style.display = 'block';
+	           		document.getElementById('insert').style.display = 'none';
+		         		document.getElementById('update').style.display = 'none';
+		         		document.getElementById('delete').style.display = 'none';
+		        	}
+            }
+            function newAuthor() { showform('insert'); }
+            function updateAuthor(author_id) { showform('update'); }
+            function deleteAuthor(author_id) { showform ('delete'); }
+            function browseAuthors() { showform ('browse'); }
+            function showAll() { showform ('all'); }  
+        </script>
+    </head>
+
+    <body onload="browseAuthors()">
+        <h1>Browse Authors <i class="fa-solid fa-pen-nib"></i></h1>
+        <h2>[ <a href="/">Home <i class="fa-solid fa-house"></i></a> | <a href="/manga">Manga <i class="fa-solid fa-book-open"></i></a> | <a href="/readers">Readers <i class="fa-solid fa-users"></i></a> | <a href="/manga_readers">Manga_Readers <i class="fa-solid fa-book-open-reader"></i></a> | Authors <i class="fa-solid fa-pen-nib"></i> | <a href="/anime">Anime <i class="fa-solid fa-video"></i></a> | <a href="/studios">Studios <i class="fa-solid fa-film"></i></a> ]</h2>
+        
+        <div id="browse">
+            <p><a href="#" onClick="showAll()" class="formsDisplay">Display all Forms</a></p>
+            <button class="btn2"><a href="#" onClick="newAuthor()">New</a></button>
+            <button class="btn2"><a href="#" onClick="updateAuthor({{this.author_id}})">Update</a></button>
+            <table id="author-table" border="1" cellpadding="5">
+
+                <thead>
+
+                  <tr>
+                    <th></th>
+                    <th>Author ID</th>
+                    <th>Name</th>
+                  </tr> 
+                </thead>
+                
+                <tbody>
+                  
+                  {{#each data}}
+                  <tr data-value="{{this.author_id}}">
+                    <td><button class="btndel" onclick="deleteAuthor({{this.author_id}})">Delete</button></td>
+                    <td>{{this.author_id}}</td>
+                    <td>{{this.name}}</td>
+                  </tr>
+                  {{/each}}
+                </tbody>          
+            </table>
+            <script src="./js/delete_author.js"></script>
+            <p>&nbsp;</p>
+        </div> <!-- browse -->
+
+        <div id="insert">
+          <h2>Adding an Author Form</h2>
+          <p>Use the form below to add a new Author to the database</p>
+            <form id="add-author-form" method="POST" action="/add-author-form">
+              <fieldset class="fields">
+                <label for="input-name"> Full Name (last, first): </label> 
+                <input type="text" name="input-name" id="input-name">
+              </fieldset>
+                <button class="btn" type="submit" value="Add Author"><span>Add Author</span></button>
+                <button class="btn" type="button" value="Cancel" onClick="browseAuthors()"><span>Cancel</span></button>
+            </form> 
+        </div><!-- insert --> 
+
+        <p>&nbsp;</p>
+        <div id="update">
+          <h2>Updating an Author Form</h2>
+          <p>Use the form below to select an Author and update their name</p>
+            <form id="update-author-form-ajax">
+                <fieldset class="fields">
+                  <label for="input-author">Author: </label>
+                    <select name="input-author" id="mySelect">
+                      <option value="test">Select an Author</option>
+                      {{#each data}}
+                      <option value="{{this.author_id}}">{{this.name}}</option>
+                      {{/each}}
+                    </select>
+                  <label for="input-name">New Name: </label> 
+                  <input type="text" name="input-name" id="input-name-update">
+              </fieldset>
+                  <button class="btn" type="submit" value="Update Author"><span>Update Author</span></button>
+                  <button class="btn" type="button" value="Cancel" onClick="browseAuthors()"><span>Cancel</span></button>
+            </form> 
+          <script src="./js/update_author.js"></script>
+        </div><!-- update -->
+
+    </body>
+</html>

@@ -1,0 +1,138 @@
+/*
+Citation for the following code: 
+Code adapted from Node.JS starter guide
+Source URL: https://github.com/osu-cs340-ecampus/nodejs-starter-app
+*/
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Project Adapt - Studios</title>
+        <link href="./css/style.css" rel="stylesheet" type="text/css" />
+        <script src="https://kit.fontawesome.com/a4d6593cdd.js" crossorigin="anonymous"></script>
+        <script language="JavaScript">
+            function showform(dowhat) {
+              /*
+              CRUD operations are made visible here
+              */
+              if (dowhat == 'insert'){
+			          document.getElementById('browse').style.display = 'none';
+			          document.getElementById('insert').style.display = 'block';
+			          document.getElementById('update').style.display = 'none';
+				        document.getElementById('delete').style.display = 'none';
+			        }
+			        else if (dowhat == 'update'){
+			          document.getElementById('browse').style.display = 'none';
+			          document.getElementById('insert').style.display = 'none';
+			          document.getElementById('update').style.display = 'block';
+			          document.getElementById('delete').style.display = 'none';
+			        }
+			        else if (dowhat == 'delete'){
+			  	      document.getElementById('browse').style.display = 'none';
+		    	      document.getElementById('insert').style.display = 'none';
+		          	document.getElementById('update').style.display = 'none';
+	          		document.getElementById('delete').style.display = 'block';
+		        	}
+              else if (dowhat == 'all'){
+		        		document.getElementById('browse').style.display = 'block';
+		        		document.getElementById('insert').style.display = 'block';
+	          		document.getElementById('update').style.display = 'block';
+	           		document.getElementById('delete').style.display = 'block';
+		        	}
+		          else { //by default display browse
+		  		      document.getElementById('browse').style.display = 'block';
+		         		document.getElementById('insert').style.display = 'none';
+	           		document.getElementById('update').style.display = 'none';
+	           		document.getElementById('delete').style.display = 'none';
+		        	}
+            }
+            function newStudio() { showform('insert'); }
+            function updateStudio(studio_id) { showform('update'); }
+            function deleteStudio(studio_id) { showform ('delete'); }
+            function browseStudios() { showform ('browse'); }
+            function showAll() { showform ('all'); }  
+        </script>
+    </head>
+
+    <body onload="browseStudios()">
+        <h1>Browse Studios <i class="fa-solid fa-film"></i></h1>
+        <h2>[ <a href="/">Home <i class="fa-solid fa-house"></i></a> | <a href="/manga">Manga <i class="fa-solid fa-book-open"></i></a> | <a href="/readers">Readers <i class="fa-solid fa-users"></i></a> | <a href="/manga_readers">Manga_Readers <i class="fa-solid fa-book-open-reader"></i></a> | <a href="/authors">Authors <i class="fa-solid fa-pen-nib"></i></a> | <a href="/anime">Anime <i class="fa-solid fa-video"></i></a> | Studios <i class="fa-solid fa-film"></i></a> ]</h2>
+        <div id="browse">
+            <p><a href="#" onClick="showAll()" class="formsDisplay">Display all Forms</a></p>
+            <table border="1" cellpadding="5" id="studio-table">
+                
+                <thead>
+                  <tr>
+                    <button class="btn2"><a href="#" onClick="newStudio()">New</a></th></button>
+                    <button class="btn2"><a href="#" onClick="updateStudio({{this.studio_id}})">Update</a></td></button>
+                    <th></th>
+                    <th>Studio ID</th>
+                    <th>Name</th>
+                    <th>Established Date</th>
+                    <th>Website</th>
+                    <th>Anime Count</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {{#each data}}
+                    <tr>
+                      <td><button class="btndel" onclick="deleteStudio({{this.studio_id}})">Delete</a></td>
+                      <td>{{this.studio_id}}</td>
+                      <td>{{this.name}}</td>
+                      <td>{{this.establish_date}}</td>
+                      <td>{{this.website}}</td>
+                      <td>{{this.anime_count}}</td>
+                    </tr>
+                  {{/each}}
+                </tbody>
+                
+            </table>
+            <script src="./js/delete_studio.js"></script>
+            <p>&nbsp;</p>
+        </div> <!-- browse -->
+
+        <div id="insert">
+          <h2>Adding a Studio Form</h2>
+          <p>Use the form below to add a new Studio to the database</p>
+            <form id="add-studio-form" method="POST" action="/add-studio-form">
+              <fieldset class="fields">
+                  <label for="input-name"> Name: </label> 
+                  <input type="text" name="input-name" id="input-name">
+                  <label for="input-date"> Established Date: </label> 
+                  <input type="date" name="input-date" id="input-date">
+                  <label for="input-website"> Website: </label> 
+                  <input type="text" name="input-website" id="input-website">
+                  <label for="input-count"> Anime Count: </label> 
+                  <input type="number" name="input-count" id="input-count">
+                </fieldset>
+                  <button class="btn" type="submit" value="Add Studio"><span>Add Studio</span></button>
+                  <button class="btn" type="button" value="Cancel" onClick="browseStudios()"><span>Cancel</span></button>
+            </form> 
+        </div><!-- insert -->
+
+        <p>&nbsp;</p>
+        <div id="update">
+            <h2>Updating a Studio's Anime Count Form</h2>
+          <p>Use the form below to select a Studio and update their anime count</p>
+            <form id="update-studio-form-ajax">
+              <fieldset class="fields">
+                <label for="input-name">Name: </label>
+                <select name="input-name" id="mySelect">
+                  <option value="test">Select a Studio</option>
+                  {{#each data}}
+                  <option value="{{this.studio_id}}">{{this.name}}</option>
+                  {{/each}}
+                </select>
+                <label for="input-count">Anime Count: </label>
+                <input type="number" name="input-count" id="input-count-update">
+                </fieldset>
+                <button class="btn" type="submit" value="Update Studio"><span>Update Studio</span></button>
+                <button class="btn" type="button" value="Cancel" onClick="browseStudios()"><span>Cancel</span></button>
+            </form> 
+            <script src="./js/update_studio.js"></script>
+        </div><!-- update -->
+
+    </body>
+</html>
